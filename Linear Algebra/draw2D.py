@@ -143,7 +143,7 @@ def draw2D(*objects, origin=False, axes=True, axes_labels=False, ticks=True, tic
         ax.set_yticks(np.arange(plt.ylim()[0],plt.ylim()[1],grid_size[1])) 
     
     if grid:
-        plt.grid(True, alpha=0.6)
+        plt.grid(True, alpha=0.4)
         
     ax.set_axisbelow(True)
 

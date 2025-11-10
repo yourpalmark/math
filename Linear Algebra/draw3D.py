@@ -112,7 +112,14 @@ def draw3D(*objects, origin=False, axes=True, axes_labels=False, ticks=True, tic
     ax = fig.add_subplot(111, projection='3d')
     
     ax.view_init(elev=elev,azim=azim)
+    
+    # Set up grid with custom properties
     ax.grid(grid)
+    if grid:
+        # Set grid line properties for each axis
+        ax.xaxis._axinfo["grid"]["color"] = (1, 1, 1, 0.2) if dark_mode else (0, 0, 0, 0.2)
+        ax.yaxis._axinfo["grid"]["color"] = (1, 1, 1, 0.2) if dark_mode else (0, 0, 0, 0.2)
+        ax.zaxis._axinfo["grid"]["color"] = (1, 1, 1, 0.2) if dark_mode else (0, 0, 0, 0.2)
 
     if grid_size:
         ax.xaxis.set_major_locator(MultipleLocator(grid_size[0]))
