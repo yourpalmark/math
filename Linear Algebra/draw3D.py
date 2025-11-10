@@ -99,6 +99,31 @@ def set_translucent_panes(ax, dark_mode, pane_alpha=0.15):
             pane.set_edgecolor(edge_rgba)
             pane.set_alpha(pane_alpha)
 
+def get_label_xyz(start_point, end_point=None):
+    x1, y1, z1 = start_point
+    
+    if end_point is not None:
+        x2, y2, z2 = end_point
+        mx, my, mz = (x1+x2)/2, (y1+y2)/2, (z1+z2)/2
+        vx, vy, vz = (x2-x1), (y2-y1), (z2-z1)
+    else:
+        mx, my, mz = x1, y1, z1
+        vx, vy, vz = x1, y1, z1
+
+    # perpendicular offset by delta
+    norm = (vx**2 + vy**2 + vz**2)**0.5 or 1.0
+    nx, ny, nz = -vy/norm, vx/norm, vz/norm
+    delta = 0.2  # data-units
+    
+    if end_point is not None:
+        lx, ly, lz = mx + delta*nx, my + delta*ny, mz + delta*nz
+    else:
+        lx, ly, lz = x1, my + delta*ny, mz + delta*nz
+    
+    yield lx
+    yield ly
+    yield lz
+
 def draw3D(*objects, origin=False, axes=True, axes_labels=False, ticks=True, tick_labels=True, grid=False, grid_size=(1,1,1), dark_mode=True, width=6, dpi=100, nice_aspect_ratio=True, save_as=None, azim=None, elev=None, depthshade=True):
 
     if dark_mode:
@@ -181,6 +206,9 @@ def draw3D(*objects, origin=False, axes=True, axes_labels=False, ticks=True, tic
     for obj in objects:
         if type(obj) == Point3D:
             ax.scatter(obj.x, obj.y, obj.z, color=obj.color, depthshade=depthshade)
+            if obj.label is not None:
+                lx, ly, lz = get_label_xyz((obj.x, obj.y, obj.z))
+                ax.text(lx, ly, lz, obj.label, ha='center')
         elif type(obj) == Points3D:
             all_x = [p.x for p in obj.points]
             all_y = [p.y for p in obj.points]
@@ -188,6 +216,10 @@ def draw3D(*objects, origin=False, axes=True, axes_labels=False, ticks=True, tic
             all_colors = [p.color for p in obj.points]
             all_labels = [p.label for p in obj.points]
             ax.scatter(all_x, all_y, all_z, color=all_colors, depthshade=depthshade)
+            for i, txt in enumerate(all_labels):
+                if txt is not None:
+                    lx, ly, lz = get_label_xyz((all_x[i], all_y[i], all_z[i]))
+                    ax.text(lx, ly, lz, all_labels[i], ha='center')
         elif type(obj) == Line3D:
             draw_segment(ax, obj.start_point, obj.end_point, color=obj.color, linestyle=obj.linestyle)
         elif type(obj) == Arrow3D:

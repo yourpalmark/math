@@ -112,8 +112,8 @@ def draw2D(*objects, origin=False, axes=True, axes_labels=False, ticks=True, tic
     y_size = max_y-min_y
     
     # Grid
-    x_padding = max(ceil(0.02 * x_size), grid_size[0])  # Reduced padding from 0.05 to 0.02
-    y_padding = max(ceil(0.02 * y_size), grid_size[1])  # Reduced padding from 0.05 to 0.02
+    x_padding = max(ceil(0.05 * x_size), grid_size[0])
+    y_padding = max(ceil(0.05 * y_size), grid_size[1])
 
     def round_up_to_multiple(val,size):
         return floor((val + size) / size) * size
@@ -161,7 +161,7 @@ def draw2D(*objects, origin=False, axes=True, axes_labels=False, ticks=True, tic
             plt.scatter(obj.x, obj.y, color=obj.color, zorder=4)
             if obj.label is not None:
                 lx, ly = get_label_xy((obj.x, obj.y))
-                plt.annotate(obj.label, (lx, ly), ha='center')
+                plt.annotate(obj.label, (lx, ly), xytext=(lx, ly), ha='center')
         elif type(obj) == Points2D:
             all_x = [p.x for p in obj.points]
             all_y = [p.y for p in obj.points]
@@ -171,7 +171,7 @@ def draw2D(*objects, origin=False, axes=True, axes_labels=False, ticks=True, tic
             for i, txt in enumerate(all_labels):
                 if txt is not None:
                     lx, ly = get_label_xy((all_x[i], all_y[i]))
-                    plt.annotate(txt, (lx, ly), ha='center')
+                    plt.annotate(txt, (lx, ly), xytext=(lx, ly), ha='center')
         elif type(obj) == Line2D:
             x1, y1 = obj.start_point
             x2, y2 = obj.end_point
