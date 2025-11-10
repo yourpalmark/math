@@ -23,7 +23,7 @@ class Points2D():
         self.color = color
 
 class Line2D():
-    def __init__(self, start_point, end_point, color='gray', linestyle='solid', label=None):
+    def __init__(self, start_point, end_point=(0,0), color='gray', linestyle='solid', label=None):
         self.start_point = start_point
         self.end_point = end_point
         self.color = color
@@ -91,7 +91,7 @@ def get_label_xy(start_point, end_point=None):
     yield lx
     yield ly
 
-def draw2D(*objects, origin=False, axes=True, axes_labels=False, ticks=True, tick_labels=True, grid=False, grid_size=(1,1), dark_mode=True, width=6, dpi=100, nice_aspect_ratio=True, save_as=None):
+def draw2D(*objects, origin=False, axes=True, axes_labels=False, ticks=True, tick_labels=True, grid=True, grid_size=(1,1), dark_mode=True, width=6, dpi=100, nice_aspect_ratio=True, save_as=None):
 
     fig = plt.gcf()
     

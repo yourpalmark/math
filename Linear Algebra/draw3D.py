@@ -26,14 +26,15 @@ class Points3D():
         self.color = color
 
 class Line3D():
-    def __init__(self, start_point, end_point, color='gray', linestyle='solid'):
+    def __init__(self, start_point, end_point=(0,0,0), color='gray', linestyle='solid', label=None):
         self.start_point = start_point
         self.end_point = end_point
         self.color = color
         self.linestyle = linestyle
+        self.label = label
 
 class Arrow3D():
-    def __init__(self, head, tail=(0,0,0), color='red', linestyle='solid', head_length=0.2, head_radius=0.08, head_resolution=24):
+    def __init__(self, head, tail=(0,0,0), color='red', linestyle='solid', head_length=0.2, head_radius=0.08, head_resolution=24, label=None):
         self.head = head
         self.tail = tail
         self.color = color
@@ -41,6 +42,7 @@ class Arrow3D():
         self.head_length = head_length
         self.head_radius = head_radius
         self.head_resolution = head_resolution
+        self.label = label
 
 def process_pt(pt, color):
     length = len(pt)
@@ -124,7 +126,7 @@ def get_label_xyz(start_point, end_point=None):
     yield ly
     yield lz
 
-def draw3D(*objects, origin=False, axes=True, axes_labels=False, ticks=True, tick_labels=True, grid=False, grid_size=(1,1,1), dark_mode=True, width=6, dpi=100, nice_aspect_ratio=True, save_as=None, azim=None, elev=None, depthshade=True):
+def draw3D(*objects, origin=False, axes=True, axes_labels=False, ticks=True, tick_labels=True, grid=True, grid_size=(1,1,1), dark_mode=True, width=6, dpi=100, nice_aspect_ratio=True, save_as=None, azim=None, elev=None, depthshade=True):
 
     if dark_mode:
         plt.style.use('dark_background')
@@ -222,6 +224,9 @@ def draw3D(*objects, origin=False, axes=True, axes_labels=False, ticks=True, tic
                     ax.text(lx, ly, lz, all_labels[i], ha='center')
         elif type(obj) == Line3D:
             draw_segment(ax, obj.start_point, obj.end_point, color=obj.color, linestyle=obj.linestyle)
+            if obj.label is not None:
+                lx, ly, lz = get_label_xyz(obj.start_point, obj.end_point)
+                ax.text(lx, ly, lz, obj.label, ha='center')
         elif type(obj) == Arrow3D:
             head, tail = obj.head, obj.tail
             length = sqrt((head[0]-tail[0])**2 + (head[1]-tail[1])**2 + (head[2]-tail[2])**2)
@@ -240,6 +245,9 @@ def draw3D(*objects, origin=False, axes=True, axes_labels=False, ticks=True, tic
         
             # shaft
             draw_segment(ax, start, shaft_end, color=color, linestyle=linestyle)
+            if obj.label is not None:
+                lx, ly, lz = get_label_xyz(shaft_end, start)
+                ax.text(lx, ly, lz, obj.label, ha='center')
         
             # orthonormal basis around d
             up = np.array([0., 0., 1.]) if abs(d[2]) < 0.999 else np.array([0., 1., 0.])
